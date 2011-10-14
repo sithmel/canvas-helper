@@ -1,3 +1,7 @@
+// coded by Jonas Wagner
+// https://github.com/jwagner
+//
+
 (function () {
 window.clock = {};
 window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;

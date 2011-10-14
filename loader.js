@@ -1,3 +1,6 @@
+// coded by Jonas Wagner
+// https://github.com/jwagner
+//
 (function(){
     window.loader = {};
 

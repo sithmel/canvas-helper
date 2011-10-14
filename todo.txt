@@ -1,0 +1,8 @@
+1 - altri tipi di animazioni
+2 - proprietà angolo
+2 - aggiornare lib easing??
+3 - aggiungere scala tempo e spazio
+
+...
+collisioni (wrappare in un oggetto?) usare i tile
+vita/morte di un oggetto (booleano)

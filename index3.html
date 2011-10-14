@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<head>
+    <title>Test canvas Layers</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div id="canvasnode">
+        <canvas id="layer0"/>
+    </div>
+
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery.easing.js"></script>
+    <script type="text/javascript" src="input.js"></script>
+    <script type="text/javascript" src="loader.js"></script>
+    <script type="text/javascript" src="clock.js"></script>
+    <script type="text/javascript" src="layer.js"></script>
+    <script type="text/javascript" src="motion.js"></script>
+    <script type="text/javascript" src="init.js"></script>
+
+    <script  type="text/javascript">
+(function (){
+    // resize canvas
+    var resizecanvas = function (){
+        var canvas = document.getElementById('layer0');
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+    };
+    window.onresize = resizecanvas;
+    resizecanvas();
+    // setup 
+    var resource_loader = new loader.Loader('gfx/'),
+        gfx = resource_loader.resources,    
+        layer0 = new Layer(document.getElementById('layer0')),
+        input  = new inputhandler.InputHandler(layer0.canvas),
+        timer  = new clock.Clock(),
+        objs = [],
+        calculate_position = function (objs,td){
+            var i,
+                len = objs.length,
+                m, newobjs;
+            for (i = 0;i < len;i++){
+                if(objs[i].isAlive()){
+                    m = objs[i].motion.getMotion();
+                    objs[i].x += m.dx;
+                    objs[i].y += m.dy;
+                }
+                newobjs.push(objs[i]);
+            }
+            return newobjs;
+        };
+
+    resource_loader.onready = function () {
+        timer.start();
+        if(window.start) window.start();
+    }
+//    resource_loader.load(['spark.png', 'logo.png']);
+    resource_loader.load([]);
+
+//    window.timer = timer;
+//    window.gfx = gfx;
+//    window.input = input;
+
+    var Square = function (x,y,h,color, motion){
+        this.x = x;
+        this.y = y;
+
+        this.h = h;
+        this.color = color;
+        this.motion = motion;
+    }
+    Square.prototype.draw = function (ctx){
+        ctx.fillStyle = this.color;  
+        ctx.fillRect (this.x, this.y, this.h, this.h); 
+    };
+
+    var square = new Square(100,100,10,"rgb(0,0,0)", new MotionEasing(100,"easeOutElastic", 'easeOutBounce'))
+
+    objs.push(square);
+
+    timer.ontick = function(td){
+        objs = calculate_position(objs, td);
+        layer0.draw(objs); 
+    }
+    
+    input.onClick = function (x, y){
+        square.motion.moveTo(x - square.x, y - square.y);
+    }
+     
+}());
+    </script>
+
+</body>
+

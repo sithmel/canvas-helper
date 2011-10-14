@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<head>
+    <title>Test canvas Layers</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div id="canvasnode">
+        <canvas id="layer0"/>
+    </div>
+
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="input.js"></script>
+    <script type="text/javascript" src="loader.js"></script>
+    <script type="text/javascript" src="clock.js"></script>
+    <script type="text/javascript" src="layer.js"></script>
+    <script type="text/javascript" src="init.js"></script>
+
+    <script  type="text/javascript">
+(function (){
+    // resize canvas
+    var resizecanvas = function (){
+        var canvas = document.getElementById('layer0');
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+    };
+    window.onresize = resizecanvas;
+    resizecanvas();
+    // setup 
+    var resource_loader = new loader.Loader('gfx/'),
+        gfx = resource_loader.resources,    
+        layer0 = new Layer(document.getElementById('layer0')),
+        input  = new inputhandler.InputHandler(layer0.canvas),
+        timer  = new clock.Clock(),
+        objs = [],
+        calculate_position = function (objs,td){
+            var newobjs = [];
+            for (var i = 0; i < objs.length ; i++){
+                objs[i].x += objs[i].speed.x;
+                objs[i].y += objs[i].speed.y;
+                objs[i].h += 0.2;
+                if (objs[i].h < 50){
+                    newobjs.push(objs[i]);
+                }
+            }
+            return newobjs;
+        };
+
+    resource_loader.onready = function () {
+        timer.start();
+        if(window.start) window.start();
+    }
+//    resource_loader.load(['spark.png', 'logo.png']);
+    resource_loader.load([]);
+
+//    window.timer = timer;
+//    window.gfx = gfx;
+//    window.input = input;
+
+    var Square = function (x,y,h,color){
+        this.x = x;
+        this.y = y;
+        this.speed = {
+            x: (Math.random() * 4) - 2,
+            y: (Math.random() * 4) - 2
+        }
+        this.h = h;
+        this.color = color;
+    }
+    Square.prototype.draw = function (ctx){
+        ctx.fillStyle = this.color;  
+        ctx.fillRect (this.x, this.y, this.h, this.h); 
+    };
+
+
+    timer.ontick = function(td){
+        objs = calculate_position(objs, td);
+        layer0.draw(objs); 
+    }
+    
+    input.onClick = function (x, y){
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        objs.push(new Square(x,y,10,"rgb(" + r.toString() + "," + g.toString() + "," + b.toString() + ")"))
+    }
+     
+
+
+
+
+
+}());
+    </script>
+
+</body>
+
